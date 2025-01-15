@@ -67,9 +67,9 @@ class CustomUser(AbstractBaseUser):
         param is_active: user role, default value False
         type updated_at: bool
     """
-    first_name = models.CharField(max_length=20, default=None)
-    last_name = models.CharField(max_length=20, default=None)
-    middle_name = models.CharField(max_length=20, default=None)
+    first_name = models.CharField(max_length=20, blank=True, null=True)
+    last_name = models.CharField(max_length=20, blank=True, null=True)
+    middle_name = models.CharField(max_length=20, blank=True, null=True)
     email = models.CharField(max_length=100, unique=True, default=None)
     password = models.CharField(null=False, max_length=255)
     created_at = models.DateTimeField(editable=False, auto_now_add=True)
@@ -90,8 +90,7 @@ class CustomUser(AbstractBaseUser):
                  user email, user password, user updated_at, user created_at,
                  user role, user is_active
         """
-        return f"'id': {self.id}, 'first_name': '{self.first_name}', 'middle_name': '{self.middle_name}', 'last_name': '{self.last_name}', 'email': '{self.email}', 'created_at': {int(self.created_at.timestamp())}, 'updated_at': {int(self.updated_at.timestamp())}, 'role': {self.role}, 'is_active': {self.is_active}"  # 'password': '{self.password}', \
-
+        return self.email
     def __repr__(self):
         """
         This magic method is redefined to show class and id of CustomUser object.
@@ -220,6 +219,12 @@ class CustomUser(AbstractBaseUser):
             user_to_update.is_active = is_active
         user_to_update.save()
 
+    def has_perm(self, perm, obj=None):
+        return True
+
+    def has_module_perms(self, app_label):
+        return True
+    
     @staticmethod
     def get_all():
         """
